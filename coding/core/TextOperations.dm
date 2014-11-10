@@ -1,0 +1,158 @@
+var/datum/TextOperations/TextOperations = new
+
+/datum/TextOperations/proc/StartsWith(text, str, case_sensitive = 0)
+	if (case_sensitive) return findtextEx(text, str, 1, lentext(str) + 1)
+	else                return findtext(text, str, 1, lentext(str) + 1)
+
+/datum/TextOperations/proc/EndsWith(text, str, case_sensitive = 0)
+	if (case_sensitive) return findtextEx(text, str, -lentext(str))
+	else                return findtext(text, str, -lentext(str))
+
+/datum/TextOperations/proc/ReverseText(text)
+	var/result = ""
+
+	for (var/i = length(text), i > 0, i = i - 1)  result = result + ascii2text(text2ascii(text, i))
+
+	return result
+
+/datum/TextOperations/proc/_Left(text, pos)
+	if (pos > 0)        return copytext(text, 1, pos)
+	else                return text
+
+/datum/TextOperations/proc/_Right(text, pos)
+	if (pos > 0)        return copytext(text, pos + 1)
+	else                return text
+
+/datum/TextOperations/proc/IndexOf(text, str, case_sensitive = 0, start = 1)
+	var/pos
+
+	if (case_sensitive)  pos = findtextEx(text, str, start)
+	else                 pos = findtext(text, str, start)
+
+	return pos
+
+/datum/TextOperations/proc/ProperCase(text)
+	if (length(text) > 1)
+		var result           = uppertext(copytext(text, 1, 2))
+		var old_pos          = 2
+		var pos
+
+		do
+			pos              = TextOperations.IndexOf(text, " ", start = old_pos)
+
+			if (pos > 0)
+				result       = result + lowertext(copytext(text, old_pos, pos)) + uppertext(copytext(text, pos, pos + 2))
+				old_pos      = pos + 2
+			else
+				result       = result + lowertext(copytext(text, old_pos))
+		while (pos)
+
+		return result
+	else                     return uppertext(text)
+
+/datum/TextOperations/proc/Left(text, str, case_sensitive = 0)            return _Left(text, IndexOf(text, str, case_sensitive))
+/datum/TextOperations/proc/Right(text, str, case_sensitive = 0)           return _Right(text, IndexOf(text, str, case_sensitive))
+/datum/TextOperations/proc/BackwardsLeft(text, str, case_sensitive = 0)   return _Left(text, length(text) - IndexOf(ReverseText(text), str, case_sensitive) + 1)
+/datum/TextOperations/proc/BackwardsRight(text, str, case_sensitive = 0)  return _Right(text, length(text) - IndexOf(ReverseText(text), str, case_sensitive) + 1)
+
+/datum/TextOperations/var/const/NOMINATIVE = 1
+/datum/TextOperations/var/const/OBLIQUE = 2
+/datum/TextOperations/var/const/POSSESSIVE = 3
+/datum/TextOperations/var/const/REFLEXIVE = 4
+/datum/TextOperations/var/const/FORMAL = 5
+
+/datum/TextOperations/proc/GetGenderPronoun(gender, subject = NOMINATIVE)
+	switch (subject)
+		if (NOMINATIVE)
+			switch (gender)
+				if (MALE)      return "He"
+				if (FEMALE)    return "She"
+				if (NEUTER)    return "It"
+				if (PLURAL)    return "They"
+		if (OBLIQUE)
+			switch (gender)
+				if (MALE)      return "Him"
+				if (FEMALE)    return "Her"
+				if (NEUTER)    return "It"
+				if (PLURAL)    return "Them"
+		if (POSSESSIVE)
+			switch (gender)
+				if (MALE)      return "His"
+				if (FEMALE)    return "Hers"
+				if (NEUTER)    return "Its"
+				if (PLURAL)    return "Theirs"
+		if (REFLEXIVE)
+			switch (gender)
+				if (MALE)      return "Himself"
+				if (FEMALE)    return "Herself"
+				if (NEUTER)    return "Itself"
+				if (PLURAL)    return "Themselves"
+		if (FORMAL)
+			switch (gender)
+				if (MALE)      return "Sir"
+				if (FEMALE)    return "Ma'am"
+				else           CRASH("Operation not supported: [gender] in combination with FORMAL subject.")
+
+/*
+	From Deadron.TextHandling
+*/
+/datum/TextOperations/proc/Replace(text, search_string, replacement_string, case_sensitive = 0)
+	var/list/textList = TextOperations.Split(text, search_string, case_sensitive)
+	return TextOperations.Join(textList, replacement_string)
+
+/datum/TextOperations/proc/Split(text, separator, case_sensitive = 0)
+	var/textlength      = lentext(text)
+	var/separatorlength = lentext(separator)
+	var/list/textList   = new /list()
+	var/searchPosition  = 1
+	var/findPosition    = 1
+	var/buggyText
+	while (1)
+		findPosition = findtext(text, separator, searchPosition, 0)
+		buggyText = copytext(text, searchPosition, findPosition)
+		textList += "[buggyText]"
+
+		searchPosition = findPosition + separatorlength
+		if (findPosition == 0)
+			return textList
+		else
+			if (searchPosition > textlength)
+				textList += ""
+				return textList
+
+/datum/TextOperations/proc/Join(list/the_list, separator)
+	var/total          = the_list.len
+	if (total == 0)    return
+
+	var/newText        = "[the_list[1]]"
+	var/count
+	for (count = 2, count <= total, count++)
+		if (separator) newText += separator
+		newText        += "[the_list[count]]"
+	return newText
+
+/datum/TextOperations/proc/AddZeros(n, amount)
+	var/result = "[n]"
+
+	while (length(result) < amount) result = "0[result]"
+
+	return result
+
+/datum/TextOperations/proc/FixSpelling(text)
+	var/result = "[text]"
+
+	result     = regex_replace(result, "(?<!\\S)i(?!\\S)", "I")
+	result     = regex_replace(result, "(?<!\\S)im(?!\\S)", "I'm")
+	result     = regex_replace(result, "(?<!\\S)ur(?!\\S)", "You're")
+	result     = regex_replace(result, "(?<!\\S)were(?!\\S)", "we're")
+	result     = regex_replace(result, "(?<!\\S)rite(?!\\S)", "right")
+
+	if (!result) result = text
+
+	if (!(TextOperations.EndsWith(result, ".") || TextOperations.EndsWith(result, "?") || TextOperations.EndsWith(result, "!")))
+		result = "[result]."
+
+//	result     = TextOperations.Replace(result, " i ", " I ", 1)
+//	result     = TextOperations.Replace(result, "i ", "I ", 1)
+
+	return result

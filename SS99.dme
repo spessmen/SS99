@@ -8,4 +8,5 @@
 // END_PREFERENCES
 // BEGIN_INCLUDE
 #include "coding\includes.dm"
+#include "coding\core\_includes.dm"
 // END_INCLUDE
