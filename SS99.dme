@@ -7,5 +7,6 @@
 #define DEBUG
 // END_PREFERENCES
 // BEGIN_INCLUDE
+#include "coding\defines.dm"
 #include "coding\includes.dm"
 // END_INCLUDE
