@@ -11,7 +11,15 @@
 /obj/machinery/computer/communications/New()
 	. = ..()
 
-	src.hi = new(src)
+	src.hi = new(src, "Nanotrasen Communications Terminal", 500, 300)
+	spawn src.updateInterface()
 
-/obj/machinery/computer/communications/Click()
+// Loop intended to update the content so that the user sees the red/green eye update when moving closer or farther away from the terminal.
+/obj/machinery/computer/communications/proc/updateInterface()
+	spawn
+		while (1)
+			src.hi.updateContent("content", "<p>Select an action from the list below.</p><div><a href=\"byond://\" class=\"btn btn-default\">Call the shuttle</a></div>")
+			sleep(10)
+
+/obj/machinery/computer/communications/onClick()
 	hi.show(usr)
