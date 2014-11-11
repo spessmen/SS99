@@ -198,7 +198,7 @@ mob/verb/test()
 		else
 			src.createWindow(hclient)
 			hclient.is_loaded = FALSE
-			hclient.client << output(TextOperations.Replace(TextOperations.Replace(file2text('html_interface.html'), "\[hsrc\]", "\ref[src]"), "</head>", "[head]</head>"), "browser_\ref[src].browser")
+			hclient.client << output(CO.replace(CO.replace(file2text('html_interface.html'), "\[hsrc\]", "\ref[src]"), "</head>", "[head]</head>"), "browser_\ref[src].browser")
 			winshow(hclient.client, "browser_\ref[src]", TRUE)
 
 /datum/html_interface/proc/hide(datum/html_interface_client/hclient)

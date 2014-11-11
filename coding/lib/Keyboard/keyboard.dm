@@ -202,7 +202,7 @@ client
 				/*
 				keys = split(keys, "|")
 				*/
-				keys = TextOperations.Split(keys, "|", FALSE)
+				keys = CO.split(keys, "|", FALSE)
 				// </EmpireModification>
 
 			// define three macros (key press, release, and repeat)
