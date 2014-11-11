@@ -198,12 +198,12 @@ client
 
 			// if the keys var is a string, split it into key names
 			if(istext(keys))
-				// <EmpireModification>
+				// <SS99>
 				/*
 				keys = split(keys, "|")
 				*/
 				keys = CO.split(keys, "|", FALSE)
-				// </EmpireModification>
+				// </SS99>
 
 			// define three macros (key press, release, and repeat)
 			// for every key in every macro set.
