@@ -4,7 +4,7 @@
 /client/proc/checkMovement()
 	if (mob)
 		if (src.desired_dir)
-			mob.setVelocityAndDirection(10, src.desired_dir)
+			mob.setVelocityAndDirection(2, src.desired_dir)
 		else
 			mob.stopMovement()
 
@@ -12,7 +12,7 @@
 /atom/movable/var/tmp/datum/looper/movement_looper
 
 /atom/movable/proc/setVelocityAndDirection(velocity, direction)
-	walk(src, direction, 1, step_size * (velocity / 10))
+	walk(src, direction, max(world.tick_lag, velocity != 0 ? 1 / velocity : 0), step_size)
 
 /atom/movable/proc/stopMovement()
 	src.setVelocityAndDirection(0, 0)
