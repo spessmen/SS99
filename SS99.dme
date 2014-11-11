@@ -9,6 +9,5 @@
 // BEGIN_INCLUDE
 #include "coding\defines.dm"
 #include "coding\includes.dm"
-#include "coding\game\obj.dm"
 #include "maps\station.dmm"
 // END_INCLUDE

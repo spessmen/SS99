@@ -52,6 +52,9 @@ Shows the HTML interface to the provided client. This will create a window, appl
 
 Hides the HTML interface from the provided client. This will close the browser window.
 
+	hi.isUsed()
+
+Returns TRUE if the interface is being used (has an active client) or FALSE if not.
 
 	** Additional notes **
 
@@ -185,8 +188,6 @@ mob/verb/test()
 	hclient = getClient(hclient, TRUE)
 
 	if (istype(hclient))
-		if (!hclient.active) src.enableFor(hclient)
-
 		// This needs to be commented out due to BYOND bug http://www.byond.com/forum/?post=1487244
 		// /client/proc/send_resources() executes this per client to avoid the bug, but by using it here files may be deleted just as the HTML is loaded,
 		// causing file not found errors.
@@ -240,7 +241,15 @@ mob/verb/test()
 
 /datum/html_interface/proc/disableFor(datum/html_interface_client/hclient)
 	hclient.active = FALSE
-	src.hide(hclient)
+
+/datum/html_interface/proc/isUsed()
+	if (src.clients && src.clients.len > 0)
+		var/datum/html_interface_client/hclient
+		for (var/key in clients)
+			hclient = clients[key]
+			if (hclient.active) return TRUE
+
+	return FALSE
 
 /*                 * Danger Zone */
 

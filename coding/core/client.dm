@@ -35,27 +35,23 @@
 	set hidden = 1
 	winset(src, null, x)
 
-#define VELOCITY 10
-
 // Global keyup and keydown handlers for clients.
 /client/proc
 	key_up(key, client/client)
 		if (key == K_LEFT || key == K_RIGHT || key == K_UP || key == K_DOWN)
-			if      (key == K_LEFT)  src.desired_velocity_x = src.desired_velocity_x + VELOCITY
-			else if (key == K_RIGHT) src.desired_velocity_x = src.desired_velocity_x - VELOCITY
-			else if (key == K_DOWN)  src.desired_velocity_y = src.desired_velocity_y + VELOCITY
-			else if (key == K_UP)    src.desired_velocity_y = src.desired_velocity_y - VELOCITY
+			if      (key == K_LEFT)  src.desired_dir = src.desired_dir &~ WEST
+			else if (key == K_RIGHT) src.desired_dir = src.desired_dir &~ EAST
+			else if (key == K_DOWN)  src.desired_dir = src.desired_dir &~ SOUTH
+			else if (key == K_UP)    src.desired_dir = src.desired_dir &~ NORTH
 
 			src.checkMovement()
 
 	key_down(key, client/client)
 		if (key == K_LEFT || key == K_RIGHT || key == K_UP || key == K_DOWN)
-			if (key == K_LEFT)       src.desired_velocity_x = src.desired_velocity_x - VELOCITY
-			else if (key == K_RIGHT) src.desired_velocity_x = src.desired_velocity_x + VELOCITY
-			else if (key == K_DOWN)  src.desired_velocity_y = src.desired_velocity_y - VELOCITY
-			else if (key == K_UP)    src.desired_velocity_y = src.desired_velocity_y + VELOCITY
+			if (key == K_LEFT)       src.desired_dir = src.desired_dir | WEST
+			else if (key == K_RIGHT) src.desired_dir = src.desired_dir | EAST
+			else if (key == K_DOWN)  src.desired_dir = src.desired_dir | SOUTH
+			else if (key == K_UP)    src.desired_dir = src.desired_dir | NORTH
 			else                     CRASH("Unknown key: [key].")
 
 			src.checkMovement()
-
-#undef VELOCITY

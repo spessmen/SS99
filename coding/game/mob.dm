@@ -6,3 +6,4 @@
 	pixel_x = -8
 	bound_width = 16
 	bound_height = 10
+	step_size = 8
