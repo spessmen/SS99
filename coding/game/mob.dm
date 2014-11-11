@@ -2,7 +2,7 @@
 
 /mob/living/humanoid/human
 	icon = 'icons/game/mob/human.dmi'
-	base_state = "body-male"
-	bound_x = 8
+	icon_state = "body_m_s"
+	pixel_x = -8
 	bound_width = 16
 	bound_height = 10
