@@ -38,7 +38,7 @@ $(document).ready(function()
 	onload();
 });
 
-function fixText(text)						{ return text.replace(/ÿ/g, ""); }
+function fixText(text)						{ return ("" + text).replace(/ÿ/g, ""); }
 
 function setTitle(new_title)				{ $("title").html(fixText(new_title)); $(window).trigger("onUpdateTitle"); }
 function updateLayout(new_html)				{ $("body").html(fixText(new_html)); $(window).trigger("onUpdateLayout"); setTimeout(function(){ is_loading = false; }, 200); }
