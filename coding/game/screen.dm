@@ -191,6 +191,9 @@ var/list/static_hud_elements_opt = list(new /screen/hud/inventory/optional/shoes
 		else
 			user.hud.move_intent.icon_state = "running"
 
+		if (user.velocity != 0)
+			user.clientMove(user.dir)
+
 /screen/hud/action_intent
 	icon_state = "blank"
 	screen_loc = "13:26,1:5"
