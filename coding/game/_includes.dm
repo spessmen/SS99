@@ -4,3 +4,4 @@
 #include "mob.dm"
 #include "turf.dm"
 #include "obj.dm"
+#include "screen.dm"

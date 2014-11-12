@@ -1,3 +1,6 @@
+/datum/hooks/client/proc/onNew(client/client)
+/datum/hooks/client/proc/onDel(client/client)
+
 /client/var
 	// core/modules/html_interface: last known position of previous window
 	hi_last_pos
@@ -12,9 +15,13 @@
 			hi = new type(null)
 			hi.sendResources(src)
 
+	HookManager.callHook("client", "onNew", src)
+
 	return .
 
 /client/Del()
+	HookManager.callHook("client", "onDel", src)
+
 	return ..()
 
 // Disable the built-in macros for movement.

@@ -4,7 +4,7 @@
 /client/proc/checkMovement()
 	if (mob)
 		if (src.desired_dir)
-			mob.setVelocityAndDirection(2, src.desired_dir)
+			mob.setVelocityAndDirection(1.5, src.desired_dir)
 		else
 			mob.stopMovement()
 

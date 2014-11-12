@@ -21,5 +21,5 @@
 			src.hi.updateContent("content", "<p>Select an action from the list below.</p><div><a href=\"byond://\" class=\"btn btn-default\">Call the shuttle</a></div>")
 			sleep(10)
 
-/obj/machinery/computer/communications/onClick()
-	hi.show(usr)
+/obj/machinery/computer/communications/onClick(mob/user, location, control, params)
+	hi.show(user)
