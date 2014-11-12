@@ -6,9 +6,7 @@
 	hi_last_pos
 
 /client/New()
-	. = ..()
-
-	spawn
+	spawn (-1)
 		// Preload the HTML interface. This needs to be done due to BYOND bug http://www.byond.com/forum/?post=1487244
 		var/datum/html_interface/hi
 		for (var/type in typesof(/datum/html_interface))
@@ -16,6 +14,8 @@
 			hi.sendResources(src)
 
 	HookManager.callHook("client", "onNew", src)
+
+	. = ..()
 
 	return .
 

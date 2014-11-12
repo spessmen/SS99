@@ -168,3 +168,25 @@ var/datum/CommonOperations/CO = new
 //	result     = TextOperations.Replace(result, "i ", "I ", 1)
 
 	return result
+
+/datum/CommonOperations/proc/showMessage(recipients, message)
+	if (recipients == world)
+		for (var/client/client)           CO.showMessage(client, message)
+	else if (istype(recipients, /list))
+		var/client/client
+		var/mob/mob
+
+		for (var/recipient in recipients)
+			client     = null
+
+			if (istype(recipient, /mob))
+				mob    = recipient
+				client = mob.client
+			else if (istype(recipient, /client))
+				client = recipient
+
+			if (client)                   CO.showMessage(client, message)
+			else                          Log.warn("Unknown object passed to CO.showMessage: [recipient]")
+	else if (istype(recipients, /mob))    recipients << message
+	else if (istype(recipients, /client)) recipients << message
+	else                                  Log.warn("Unknown object passed to CO.showMessage: [recipients]")

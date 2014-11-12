@@ -8,6 +8,7 @@
 #include "globals.dm"
 #include "atom.dm"
 #include "client.dm"
+#include "mob.dm"
 #include "world.dm"
 #include "screen.dm"
 
