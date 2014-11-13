@@ -13,9 +13,57 @@
 			hi = new type(null)
 			hi.sendResources(src)
 
+/*
+proc
+		set_macros()
+			// this should get us the list of all macro sets that
+			// are used by all windows in the interface.
+			var/macros = params2list(winget(src, null, "macro"))
+
+			// if the keys var is a string, split it into key names
+			if(istext(keys))
+				// <SS99>
+				/*
+				keys = split(keys, "|")
+				*/
+				keys = CO.split(keys, "|", FALSE)
+				// </SS99>
+
+			// define three macros (key press, release, and repeat)
+			// for every key in every macro set.
+			for(var/m in macros)
+				for(var/k in keys)
+
+					// It's possible to get empty strings in the list if the keys
+					// var was set to ARROWS+NUMBERS, there may be "||" in the string
+					// which turns into "" when split.
+					if(!k) continue
+
+					// By default the key isn't being held
+					keys[k] = 0
+
+					var/escaped = list2params(list("[k]"))
+
+					// Create the necessary macros for this key.
+					winset(src, "[m][k]Down", "parent=[m];name=[escaped];command=KeyDown+[escaped]")
+					winset(src, "[m][k]Up", "parent=[m];name=[escaped]+UP;command=KeyUp+[escaped]")
+
+					#ifndef NO_KEY_REPEAT
+					winset(src, "[m][k]Repeat", "parent=[m];name=[escaped]+REP;command=KeyRepeat+\"[escaped]\"")
+					#endif
+*/
+
 	HookManager.callHook("client", "onNew", src)
 
 	. = ..()
+
+	spawn (-1)
+		var/str
+		for (var/dir in CO.CARDINAL_DIRECTIONS)
+			str = CO.directionToString(dir)
+
+			winset(src, "macro|[str]|down", "parent=macro;name=[CO.toProperCase(str)];command=\".move [dir] 1\"")
+			winset(src, "macro|[str]|up", "parent=macro;name=[CO.toProperCase(str)]+UP;command=\".move [dir] 0\"")
 
 	return .
 
@@ -42,23 +90,21 @@
 	set hidden = 1
 	winset(src, null, x)
 
-// Global keyup and keydown handlers for clients.
-/client/proc
-	key_up(key, client/client)
-		if (key == K_LEFT || key == K_RIGHT || key == K_UP || key == K_DOWN)
-			if      (key == K_LEFT)  src.desired_dir = src.desired_dir &~ WEST
-			else if (key == K_RIGHT) src.desired_dir = src.desired_dir &~ EAST
-			else if (key == K_DOWN)  src.desired_dir = src.desired_dir &~ SOUTH
-			else if (key == K_UP)    src.desired_dir = src.desired_dir &~ NORTH
+/client/verb/move(var/dir as num, var/on as num)
+	set name = ".move"
+	set instant = 1
 
-			src.checkMovement()
+	if (on)
+		switch (dir)
+			if (WEST)  src.desired_dir = src.desired_dir | WEST
+			if (EAST)  src.desired_dir = src.desired_dir | EAST
+			if (SOUTH) src.desired_dir = src.desired_dir | SOUTH
+			if (NORTH) src.desired_dir = src.desired_dir | NORTH
+	else
+		switch (dir)
+			if (WEST)  src.desired_dir = src.desired_dir &~ WEST
+			if (EAST)  src.desired_dir = src.desired_dir &~ EAST
+			if (SOUTH) src.desired_dir = src.desired_dir &~ SOUTH
+			if (NORTH) src.desired_dir = src.desired_dir &~ NORTH
 
-	key_down(key, client/client)
-		if (key == K_LEFT || key == K_RIGHT || key == K_UP || key == K_DOWN)
-			if (key == K_LEFT)       src.desired_dir = src.desired_dir | WEST
-			else if (key == K_RIGHT) src.desired_dir = src.desired_dir | EAST
-			else if (key == K_DOWN)  src.desired_dir = src.desired_dir | SOUTH
-			else if (key == K_UP)    src.desired_dir = src.desired_dir | NORTH
-			else                     CRASH("Unknown key: [key].")
-
-			src.checkMovement()
+	src.checkMovement()

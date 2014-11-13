@@ -1,5 +1,7 @@
 var/datum/CommonOperations/CO = new
 
+/datum/CommonOperations/var/CARDINAL_DIRECTIONS = list(NORTH, SOUTH, EAST, WEST)
+
 /datum/CommonOperations/proc/sendFile(var/client/client, var/F)
 	client.Export("##action=load_rsc", F)
 
@@ -190,3 +192,11 @@ var/datum/CommonOperations/CO = new
 	else if (istype(recipients, /mob))    recipients << message
 	else if (istype(recipients, /client)) recipients << message
 	else                                  Log.warn("Unknown object passed to CO.showMessage: [recipients]")
+
+/datum/CommonOperations/proc/directionToString(dir)
+	if (dir & NORTH) . = . + "north"
+	if (dir & SOUTH) . = . + "south"
+	if (dir & EAST)  . = . + "east"
+	if (dir & WEST)  . = . + "west"
+
+	return .
